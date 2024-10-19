@@ -1,12 +1,35 @@
 const mongoose = require('mongoose')
-const connectDB = async () =>{
-    try {
-        const con = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`Database connection successfull`);
-    } catch (error) {
-        console.log(`Error: ${error.message}`);
-        process.exit(1);
-    }
-}
+const mongodb = require('mongodb')
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const connectDB = async () => {
+    mongoose.connect(process.env.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 30000, // 30 seconds
+        socketTimeoutMS: 45000,          // 45 seconds
+        family: 4
+    }).then(
+        console.log("database connected")
+    ).catch((err) => {
+        console.log(err);
+    })
+
+    mongoose.connection.on('connected', () => {
+        console.log('Mongoose connected to DB');
+    });
+
+    mongoose.connection.on('error', (err) => {
+        console.log('Mongoose connection error:', err.message);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+        console.log('Mongoose disconnected from DB');
+    });
+
+};
+
 
 module.exports = connectDB;
