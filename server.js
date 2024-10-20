@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require("./config/db");
 const mongoose = require('mongoose')
 const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes')
 const cors = require("cors");
 bodyParser = require('body-parser');
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 connectDB();
 app.use('/api/users', userRoutes);
+app.use('/api/task',taskRoutes)
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 })

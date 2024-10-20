@@ -8,8 +8,8 @@ const connectDB = async () => {
     mongoose.connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 30000, // 30 seconds
-        socketTimeoutMS: 45000,          // 45 seconds
+        serverSelectionTimeoutMS: 30000, 
+        socketTimeoutMS: 45000,          
         family: 4
     }).then(
         console.log("database connected")
