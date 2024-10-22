@@ -17,7 +17,7 @@ exports.getTasks = async (req, res) => {
       createdAt: { $gte: pastDate },
     });
 
-    res.status(200).json({ success: true, tasks });
+    res.status(200).json({ success: true, data: {tasks} });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to fetch tasks" });
   }
@@ -50,7 +50,7 @@ exports.createTask = async (req, res) => {
     });
 
     await newTask.save();
-    res.status(201).json({ success: true, message: "Task created successfully", task: newTask });
+    res.status(201).json({ success: true, message: "Task created successfully", data: {task: newTask} });
   } catch (error) {
     res.status(500).json({ success: false, message: "Task creation failed" });
     console.log(error)
@@ -64,7 +64,7 @@ exports.getTask = async (req, res) => {
     if (!task) {
       return res.status(404).json({ success: false, message: "Task not found" });
     }
-    res.status(200).json({ success: true, task });
+    res.status(200).json({ success: true, data: {task} });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to fetch the task" });
   }
@@ -85,7 +85,7 @@ exports.editTask = async (req, res) => {
       return res.status(404).json({ success: false, message: "Task not found" });
     }
 
-    res.status(200).json({ success: true, message: "Task updated successfully", task: updatedTask });
+    res.status(200).json({ success: true, message: "Task updated successfully", data: {task: updatedTask} });
   } catch (error) {
     res.status(500).json({ success: false, message: "Task update failed" });
   }
@@ -128,10 +128,10 @@ exports.analytics = async (req, res) => {
       due: 0,
     };
 
-    tasks.forEach(task => {
-      status[task.status]++;
-      priorities[task.priority]++;
-      if (new Date() > task.dueDate && task.status !== 'done') {
+    tasks.forEach((t) => {
+      status[t.status]++;
+      priorities[t.priority]++;
+      if (new Date() > t.dueDate && t.status !== 'done') {
         priorities.due++;
       }
     });

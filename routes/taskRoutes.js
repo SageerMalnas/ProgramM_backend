@@ -8,7 +8,7 @@ router.get('/', protect, getTasks);
 router.post('/', protect, createTask);
 router.get('/analytics', protect, analytics);
 router.get('/:taskId', protect, getTask);
-router.put('/:taskId', protect, editTask);
+router.patch('/:taskId', protect, editTask);
 router.delete('/:taskId', protect, deleteTask);
 
 
