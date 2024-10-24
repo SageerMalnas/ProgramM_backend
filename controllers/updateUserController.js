@@ -51,7 +51,8 @@ exports.updateUser = async (req, res) => {
             });
         }
 
-        user.password = await bcrypt.hash(newPassword, 12);
+        // user.password = await bcrypt.hash(newPassword, 12);
+        user.password = newPassword;
     }
 
     
