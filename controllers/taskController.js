@@ -28,7 +28,7 @@ exports.getTasks = async (req, res) => {
 exports.createTask = async (req, res) => {
   try {
     const { title, priority, checklists, dueDate, status, assignedTo } = req.body;
-    if (!title || !priority || !checklists || checklists.length === 0) {
+    if (!title || !priority || !dueDate || !checklists || checklists.length === 0) {
       return res.status(400).json({ message: "Title, priority, and at least one checklist are required." });
     }
 

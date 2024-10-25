@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema(
         priority: { type: String, enum: ['high', 'moderate', 'low'], required: true },
         checklists: [checklist],
         status: { type: String, enum: ['backlog', 'inProgress', 'todo', 'done'], default: 'todo' },
-        dueDate: Date,
+        dueDate: {type: Date, required: true},
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     },
