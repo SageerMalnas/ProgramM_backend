@@ -1,5 +1,6 @@
 const User = require('../schema/userModel');
 const bcrypt = require('bcrypt');
+const Task = require('../schema/taskModel');
 
 exports.getUser = async (req, res) => {
     const user = await User.findById(req.user._id);
@@ -112,3 +113,36 @@ exports.updateUser = async (req, res) => {
         }
     })
 }
+
+
+exports.addUserToBoard = async (req, res) => {
+    const { email } = req.body;
+    const currentUserId = req.user._id;
+
+    try {
+        const addedUser = await User.findOne({ email });
+        if (!addedUser) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'User does not exist',
+            });
+        }
+
+        const tasks = await Task.find({ createdBy: currentUserId });
+
+
+        tasks.forEach(task => task.assignedTo = addedUser._id);
+        await Promise.all(tasks.map(task => task.save()));
+
+        res.status(200).json({
+            status: 'success',
+            message: `${addedUser.email} added to the board.`,
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'An error occurred while adding the user to the board.',
+            error: error.message,
+        });
+    }
+};
