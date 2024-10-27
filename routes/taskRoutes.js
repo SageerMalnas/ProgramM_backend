@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', protect, getTasks);
 router.post('/', protect, createTask);
 router.get('/analytics', protect, analytics);
-router.get('/:taskId', protect, getTask);
+router.get('/:taskId', getTask);
 router.patch('/:taskId', protect, editTask);
 router.delete('/:taskId', protect, deleteTask);
 
