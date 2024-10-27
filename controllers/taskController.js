@@ -1,28 +1,44 @@
 const Task = require('../schema/taskModel');
 const User = require('../schema/userModel');
 
-
-// Get task with filter
 exports.getTasks = async (req, res) => {
   try {
     const { range = 7 } = req.query;
     const today = new Date();
-    const pastDate = new Date(today.getTime() - range * 24 * 60 * 60 * 1000);
+
+    const startDate = new Date(today.setHours(0, 0, 0, 0));
+    let endDate = new Date(today.setHours(23, 59, 59, 999));
+
+    if (range === '1') {
+      endDate = new Date(today.setHours(23, 59, 59, 999));
+    } else if (range === '7') {
+      const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(firstDayOfWeek.setDate(firstDayOfWeek.getDate() + 6)); 
+    } else if (range === '30') {
+      startDate.setDate(1);
+      endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      endDate.setHours(23, 59, 59, 999); 
+    }
 
     const tasks = await Task.find({
       $or: [
         { createdBy: req.user._id },
         { assignedTo: req.user._id },
       ],
-      createdAt: { $gte: pastDate },
+      $or: [
+        { dueDate: { $gte: startDate, $lte: endDate } }, 
+        { dueDate: null } 
+      ]
     }).populate({
       path: 'assignedTo',
-      select: '_id email' 
+      select: '_id email'
     });
 
-    res.status(200).json({ success: true, data: {tasks} });
+    return res.status(200).json({ success: true, data: { tasks } });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to fetch tasks" });
+    console.error('Error fetching tasks:', error.message);
+    return res.status(500).json({ success: false, message: "Failed to fetch tasks", error: error.message });
   }
 };
 

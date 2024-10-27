@@ -3,25 +3,35 @@ const bcrypt = require('bcrypt');
 const Task = require('../schema/taskModel');
 
 exports.getUser = async (req, res) => {
-    const user = await User.findById(req.user._id);
 
-    if (!user) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'User not found',
+    try {
+        const users = await User.find(); 
+
+        if (!users || users.length === 0) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'No users found',
+            });
+        }
+
+        const userList = users.map(user => ({
+            name: user.name,
+            email: user.email,
+            _id: user._id,
+        }));
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                users: userList,
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Server error occurred',
         });
     }
-
-    res.status(200).json, ({
-        status: 'success',
-        data: {
-            info: {
-                name: user.name,
-                email: user.email,
-                _id: user._id,
-            }
-        }
-    })
 };
 
 exports.getUserByEmail = async (req, res) => {
