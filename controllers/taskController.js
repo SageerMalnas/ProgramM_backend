@@ -22,13 +22,19 @@ exports.getTasks = async (req, res) => {
     }
 
     const tasks = await Task.find({
-      $or: [
-        { createdBy: req.user._id },
-        { assignedTo: req.user._id },
-      ],
-      $or: [
-        { dueDate: { $gte: startDate, $lte: endDate } }, 
-        { dueDate: null } 
+      $and: [
+        {
+          $or: [
+            { createdBy: req.user._id },
+            { assignedTo: req.user._id }
+          ]
+        },
+        {
+          $or: [
+            { dueDate: { $gte: startDate, $lte: endDate } }, // Tasks within date range
+            { dueDate: null }
+          ]
+        }
       ]
     }).populate({
       path: 'assignedTo',
@@ -113,7 +119,14 @@ exports.editTask = async (req, res) => {
 
     const updatedTask = await Task.findOneAndUpdate(
       // req.params.taskId,
-      { _id: req.params.taskId, createdBy: req.user._id },
+      // { _id: req.params.taskId, createdBy: req.user._id },
+      {
+        _id: req.params.taskId,
+        $or: [
+          { createdBy: req.user._id },
+          { assignedTo: req.user._id }
+        ]
+      },
       { title, priority, checklists, dueDate, status, assignedTo },
       { new: true, runValidators: true }
     ).populate({
@@ -134,21 +147,7 @@ exports.editTask = async (req, res) => {
 
 // Delete a task
 exports.deleteTask = async (req, res) => {
-  // try {
-  //   const task = await Task.findOneAndDelete({
-  //     _id: req.params.taskId,
-  //     createdBy: req.user._id,
-  //   });
-
-  //   if (!task) {
-  //     return res.status(404).json({ success: false, message: "Task not found" });
-  //   }
-
-  //   res.status(204).json({ success: true, message: "Task deleted successfully" });
-  // } catch (error) {
-  //   res.status(500).json({ success: false, message: "Failed to delete task" });
-  // }
-
+  
   try {
     const task = await Task.findById(req.params.taskId);
 
