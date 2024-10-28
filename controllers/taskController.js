@@ -186,7 +186,7 @@ exports.analytics = async (req, res) => {
     tasks.forEach((t) => {
       status[t.status]++;
       priorities[t.priority]++;
-      if (new Date() > t.dueDate && t.status !== 'done') {
+      if (t.dueDate) {
         priorities.due++;
       }
     });
