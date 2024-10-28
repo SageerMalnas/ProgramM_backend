@@ -158,7 +158,7 @@ exports.deleteTask = async (req, res) => {
 
     await Task.findByIdAndDelete(req.params.taskId);
 
-    res.status(204).json({ success: true, message: "Task deleted successfully" });
+    res.status(200).json({ success: true, message: "Task deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to delete task" });
   }
