@@ -167,7 +167,10 @@ exports.deleteTask = async (req, res) => {
 // Task analytics
 exports.analytics = async (req, res) => {
   try {
-    const tasks = await Task.find({ createdBy: req.user._id });
+    const tasks = await Task.find({ $or: [
+      { createdBy: req.user._id },
+      { assignedTo: req.user._id }
+    ] });
 
     const status = {
       backlog: 0,
