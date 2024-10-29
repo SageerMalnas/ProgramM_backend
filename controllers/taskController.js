@@ -168,8 +168,8 @@ exports.deleteTask = async (req, res) => {
 exports.analytics = async (req, res) => {
   try {
     const tasks = await Task.find({ $or: [
-      { createdBy: req.user._id },
-      { assignedTo: req.user._id }
+      { createdBy: req.user._id }
+      // { assignedTo: req.user._id }
     ] });
 
     const status = {
